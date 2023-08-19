@@ -1,4 +1,4 @@
-package com.tutorials.eu.favdish.activites
+package com.tutorials.eu.favdish.view.activities
 
 import android.content.Intent
 import android.os.Build
@@ -8,10 +8,8 @@ import android.os.Looper
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
-import com.tutorials.eu.favdish.MainActivity
 import com.tutorials.eu.favdish.R
 import com.tutorials.eu.favdish.databinding.ActivitySplashBinding
-import kotlinx.coroutines.delay
 
 // TODO Step 1: Create a new activity as Splash Screen.
 // START

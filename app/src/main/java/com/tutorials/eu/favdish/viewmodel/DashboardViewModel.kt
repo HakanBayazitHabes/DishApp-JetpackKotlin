@@ -1,13 +1,13 @@
-package com.tutorials.eu.favdish.ui.home
+package com.tutorials.eu.favdish.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class HomeViewModel : ViewModel() {
+class DashboardViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+        value = "This is dashboard Fragment"
     }
     val text: LiveData<String> = _text
 }
