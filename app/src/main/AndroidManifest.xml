@@ -12,10 +12,9 @@
             android:name=".view.activities.AddUpdateDishActivity"
             android:exported="false"
             android:label="Add Dish"
+            android:configChanges="orientation"
             android:theme="@style/Theme.FavDish.NoActionBar"
             />
-        <!-- TODO Step 8: Create the SplashActivity as the launcher activity instead of MainActivity. -->
-        <!-- START -->
         <activity
             android:name=".view.activities.SplashActivity"
             android:label="@string/app_name"
