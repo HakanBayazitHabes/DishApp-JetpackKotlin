@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
+import com.bumptech.glide.Glide
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -135,8 +136,8 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
             if (requestCode == CAMERA) {
                 data?.let {
                     val thumbnail: Bitmap = data.extras!!.get("data") as Bitmap
-                    binding.ivDishImage.setImageBitmap(thumbnail)
-                    //Glide.with(this).load(thumbnail).centerCrop().into(binding.ivDishImage)
+                    //binding.ivDishImage.setImageBitmap(thumbnail)
+                    Glide.with(this).load(thumbnail).centerCrop().into(binding.ivDishImage)
                     binding.ivAddDishImage.setImageDrawable(
                         ContextCompat.getDrawable(
                             this,
@@ -148,8 +149,8 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
             if (requestCode == GALLERY) {
                 data?.let {
                     val selectedPhotoUri = data.data
-                    binding.ivDishImage.setImageURI(selectedPhotoUri)
-                    //Glide.with(this).load(selectedPhotoUri).centerCrop().into(binding.ivDishImage)
+                    //binding.ivDishImage.setImageURI(selectedPhotoUri)
+                    Glide.with(this).load(selectedPhotoUri).centerCrop().into(binding.ivDishImage)
                     binding.ivAddDishImage.setImageDrawable(
                         ContextCompat.getDrawable(
                             this,
@@ -158,7 +159,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                     )
                 }
             }
-        }else if (resultCode == Activity.RESULT_CANCELED) {
+        } else if (resultCode == Activity.RESULT_CANCELED) {
             Log.e("Cancelled", "User cancelled image selection")
         }
     }
