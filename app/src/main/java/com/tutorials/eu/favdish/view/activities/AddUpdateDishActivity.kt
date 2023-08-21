@@ -3,8 +3,11 @@ package com.tutorials.eu.favdish.view.activities
 import android.app.Activity
 import android.app.Dialog
 import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,7 +19,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.graphics.drawable.toBitmap
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -28,10 +35,15 @@ import com.karumi.dexter.listener.single.PermissionListener
 import com.tutorials.eu.favdish.R
 import com.tutorials.eu.favdish.databinding.ActivityAddUpdateDishBinding
 import com.tutorials.eu.favdish.databinding.DialogCustomImageSelectionBinding
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
+import java.util.UUID
 
 class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityAddUpdateDishBinding
+    private var mImagePath: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddUpdateDishBinding.inflate(layoutInflater)
@@ -137,7 +149,12 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                 data?.let {
                     val thumbnail: Bitmap = data.extras!!.get("data") as Bitmap
                     //binding.ivDishImage.setImageBitmap(thumbnail)
+
                     Glide.with(this).load(thumbnail).centerCrop().into(binding.ivDishImage)
+
+                    mImagePath = saveImageToInternalStorage(thumbnail)
+                    Log.i("ImagePath", mImagePath)
+
                     binding.ivAddDishImage.setImageDrawable(
                         ContextCompat.getDrawable(
                             this,
@@ -150,7 +167,39 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                 data?.let {
                     val selectedPhotoUri = data.data
                     //binding.ivDishImage.setImageURI(selectedPhotoUri)
-                    Glide.with(this).load(selectedPhotoUri).centerCrop().into(binding.ivDishImage)
+                    Glide.with(this)
+                        .load(selectedPhotoUri)
+                        .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .listener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: com.bumptech.glide.request.target.Target<Drawable>?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                Log.e("TAG", "Error loading image", e)
+                                return false
+                            }
+
+                            override fun onResourceReady(
+                                resource: Drawable?,
+                                model: Any?,
+                                target: com.bumptech.glide.request.target.Target<Drawable>?,
+                                dataSource: com.bumptech.glide.load.DataSource?,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                resource?.let {
+                                    val bitmap: Bitmap = resource.toBitmap()
+                                    mImagePath = saveImageToInternalStorage(bitmap)
+                                    Log.i("ImagePath", mImagePath)
+                                }
+                                return false
+                            }
+
+                        })
+                        .into(binding.ivDishImage)
+
                     binding.ivAddDishImage.setImageDrawable(
                         ContextCompat.getDrawable(
                             this,
@@ -184,9 +233,29 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
             }.show()
     }
 
+    private fun saveImageToInternalStorage(bitmap: Bitmap): String {
+        val wrapper = ContextWrapper(applicationContext)
+        var file = wrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE)
+        file = File(file, "${UUID.randomUUID()}.jpg")
+
+        try {
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return file.absolutePath
+
+    }
+
     companion object {
         private const val CAMERA = 1
         private const val GALLERY = 2
+
+        private const val IMAGE_DIRECTORY = "FavDishImages"
     }
 
 }
