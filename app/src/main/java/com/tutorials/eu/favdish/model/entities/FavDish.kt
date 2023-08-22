@@ -15,6 +15,6 @@ data class FavDish(
 
     @ColumnInfo(name = "cooking_time") val cookingTime: String,
     @ColumnInfo(name = "instructions") val directionToCook: String,
-    @ColumnInfo(name = "favourite_dish") val favouriteDish: Boolean = false,
+    @ColumnInfo(name = "favorite_dish") val favoriteDish: Boolean = false,
     @PrimaryKey(autoGenerate = true) val id: Int = 0
     )
