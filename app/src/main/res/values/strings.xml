@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">FavDish</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
 
-    <!--TODO Step 3: Add the string values to the strings.xml file.-->
-    <!--START-->
+    <string name="title_all_dishes">Home</string>
+    <string name="title_favorite_dishes">Dashboard</string>
+    <string name="title_random_dish">Notifications</string>
+
+
     <string name="splash_screen_title">Fav Dish</string>
     <string name="add_dish">Add Dish</string>
     <string name="lbl_add_dish">ADD DISH</string>
@@ -16,7 +16,7 @@
     <string name="lbl_ingredients">Ingredients</string>
     <string name="lbl_cooking_time_in_minutes">Cooking Time In Minutes</string>
     <string name="lbl_direction_to_cook">Direction the Cook</string>
-    <!--END-->
+
 
     <string name="title_select_image">Select Image Action</string>
     <string name="lbl_camera">Camera</string>
