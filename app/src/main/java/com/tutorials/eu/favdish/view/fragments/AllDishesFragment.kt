@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.tutorials.eu.favdish.R
 import com.tutorials.eu.favdish.application.FavDishApplication
 import com.tutorials.eu.favdish.databinding.FragmentAllDishesBinding
+import com.tutorials.eu.favdish.model.entities.FavDish
 import com.tutorials.eu.favdish.view.activities.AddUpdateDishActivity
 import com.tutorials.eu.favdish.view.activities.MainActivity
 import com.tutorials.eu.favdish.view.adapters.FavDishAdapter
@@ -73,8 +74,8 @@ class AllDishesFragment : Fragment() {
         }
     }
 
-    fun dishDetails() {
-        findNavController().navigate(AllDishesFragmentDirections.actionNavigationAllDishesToNavigationDishDetails())
+    fun dishDetails(favDish : FavDish) {
+        findNavController().navigate(AllDishesFragmentDirections.actionNavigationAllDishesToNavigationDishDetails(favDish))
         //requireActivity() fonksiyonu, bir fragmentin bağlı olduğu aktiviteyi elde etmek için kullanılır.
         if (requireActivity() is MainActivity) {
             (activity as MainActivity?)?.hideBottomNavigationView()
