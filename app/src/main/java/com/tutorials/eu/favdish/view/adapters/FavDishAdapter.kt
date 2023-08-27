@@ -1,9 +1,13 @@
 package com.tutorials.eu.favdish.view.adapters
 
+import android.util.Log
+import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.tutorials.eu.favdish.R
 import com.tutorials.eu.favdish.databinding.ItemDishLayoutBinding
 import com.tutorials.eu.favdish.model.entities.FavDish
 import com.tutorials.eu.favdish.view.fragments.AllDishesFragment
@@ -18,6 +22,7 @@ class FavDishAdapter(
     class ViewHolder(view: ItemDishLayoutBinding) : RecyclerView.ViewHolder(view.root) {
         val ivDishImage = view.ivDishImage
         val tvTitle = view.tvDishTitle
+        val ibMore = view.ibMore
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -43,6 +48,27 @@ class FavDishAdapter(
             if (fragment is FavoriteDishesFragment) {
                 fragment.dishDetails(dish)
             }
+        }
+
+        holder.ibMore.setOnClickListener {
+            val popup = PopupMenu(fragment.context, holder.ibMore)
+            popup.menuInflater.inflate(R.menu.menu_adapter, popup.menu)
+
+            popup.setOnMenuItemClickListener {
+                if (it.itemId == R.id.action_edit_dish) {
+                    Log.i("You have clicked on", "Edit option of ${dish.title}")
+                } else if (it.itemId == R.id.action_delete_dish) {
+                    Log.i("You have clicked on", "Delete option of ${dish.title}")
+                }
+                true
+            }
+            popup.show()
+        }
+
+        if (fragment is AllDishesFragment) {
+            holder.ibMore.visibility = View.VISIBLE
+        } else if (fragment is FavoriteDishesFragment) {
+            holder.ibMore.visibility = View.GONE
         }
     }
 
