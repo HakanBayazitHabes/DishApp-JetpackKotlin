@@ -1,6 +1,7 @@
 package com.tutorials.eu.favdish.view.fragments
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -18,12 +19,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.tutorials.eu.favdish.R
 import com.tutorials.eu.favdish.application.FavDishApplication
+import com.tutorials.eu.favdish.databinding.DialogCustomListBinding
 import com.tutorials.eu.favdish.databinding.FragmentAllDishesBinding
 import com.tutorials.eu.favdish.model.entities.FavDish
+import com.tutorials.eu.favdish.utils.Constants
 import com.tutorials.eu.favdish.view.activities.AddUpdateDishActivity
 import com.tutorials.eu.favdish.view.activities.MainActivity
+import com.tutorials.eu.favdish.view.adapters.CustomListItemAdapter
 import com.tutorials.eu.favdish.view.adapters.FavDishAdapter
 import com.tutorials.eu.favdish.viewmodel.FavDishViewModel
 import com.tutorials.eu.favdish.viewmodel.FavDishViewModelFactory
@@ -90,7 +95,7 @@ class AllDishesFragment : Fragment() {
     fun deleteDish(dish: FavDish) {
         val builder = AlertDialog.Builder(requireActivity())
         builder.setTitle(resources.getString(R.string.title_delete_dish))
-        builder.setMessage(resources.getString(R.string.msg_delete_dish_dialog,dish.title))
+        builder.setMessage(resources.getString(R.string.msg_delete_dish_dialog, dish.title))
         builder.setIcon(android.R.drawable.ic_dialog_alert)
         builder.setPositiveButton(resources.getString(R.string.lbl_yes)) { dialogInterface, _ ->
             mFavDishViewModel.delete(dish)
@@ -105,6 +110,25 @@ class AllDishesFragment : Fragment() {
         alertDialog.setCancelable(false)
         alertDialog.show()
 
+    }
+
+    private fun filterDishesListDialog() {
+        val customListDialog = Dialog(requireActivity())
+        val binding: DialogCustomListBinding = DialogCustomListBinding.inflate(layoutInflater)
+        customListDialog.setContentView(binding.root)
+
+        binding.tvTitle.text = resources.getString(R.string.title_select_item_to_filter)
+        val dishTypes = Constants.dishTypes()
+        dishTypes.add(0, Constants.ALL_ITEMS)
+        binding.rvList.layoutManager = LinearLayoutManager(requireActivity())
+        val adapter = CustomListItemAdapter(
+            requireActivity(),
+            dishTypes,
+            Constants.FILTER_SELECTION
+        )
+
+        binding.rvList.adapter = adapter
+        customListDialog.show()
     }
 
     override fun onResume() {
@@ -123,6 +147,11 @@ class AllDishesFragment : Fragment() {
         when (item.itemId) {
             R.id.action_add_dish -> {
                 startActivity(Intent(requireActivity(), AddUpdateDishActivity::class.java))
+                return true
+            }
+
+            R.id.action_filter_list -> {
+                filterDishesListDialog()
                 return true
             }
         }
