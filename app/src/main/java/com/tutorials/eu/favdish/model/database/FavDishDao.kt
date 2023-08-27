@@ -1,6 +1,7 @@
 package com.tutorials.eu.favdish.model.database
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -20,5 +21,8 @@ interface FavDishDao {
 
     @Query("SELECT * FROM FAV_DISHES_TABLE WHERE favorite_dish = 1")
     fun getFavoriteDishesList(): Flow<List<FavDish>>
+
+    @Delete
+    suspend fun deleteFavDishDetails(favDish: FavDish)
 
 }
