@@ -61,4 +61,6 @@
 
     <string name="msg_already_added_to_favorites">You have alredy added the dish to your favorites </string>
 
+    <string name="please_wait">Please Wait!</string>
+
 </resources>
