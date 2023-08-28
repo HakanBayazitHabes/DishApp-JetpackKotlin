@@ -46,6 +46,9 @@ class RandomDishFragment : Fragment() {
         mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
         mRandomDishViewModel.getRandomRecipeFromAPI()
         randomDishViewModelObserver()
+        binding!!.srlRandomDish.setOnRefreshListener {
+            mRandomDishViewModel.getRandomRecipeFromAPI()
+        }
     }
 
     private fun randomDishViewModelObserver() {
@@ -54,6 +57,9 @@ class RandomDishFragment : Fragment() {
             Observer { randomDishResponse ->
                 randomDishResponse?.let {
                     Log.i("Random Dish Response", "${randomDishResponse.recipes[0]}")
+                    if (binding!!.srlRandomDish.isRefreshing) {
+                        binding!!.srlRandomDish.isRefreshing = false
+                    }
                     setRandomDishResponseInUI(randomDishResponse.recipes[0])
                 }
             })
@@ -62,6 +68,9 @@ class RandomDishFragment : Fragment() {
             Observer { dataError ->
                 dataError?.let {
                     Log.i("Random Dish API Error", "$dataError")
+                    if (binding!!.srlRandomDish.isRefreshing) {
+                        binding!!.srlRandomDish.isRefreshing = false
+                    }
                 }
             })
         mRandomDishViewModel.loadRandomDish.observe(
@@ -111,6 +120,15 @@ class RandomDishFragment : Fragment() {
             binding!!.tvCookingDirection.text = Html.fromHtml(recipe.instructions)
         }
 
+        binding!!.ivFavoriteDish.setImageDrawable(
+            resources.getDrawable(
+                R.drawable.ic_favorite_unselected,
+                null
+            )
+        )
+
+        var addedToFavorite = false
+
         binding!!.tvCookingTime.text =
             resources.getString(
                 R.string.lbl_estimate_cooking_time,
@@ -118,37 +136,49 @@ class RandomDishFragment : Fragment() {
             )
 
         binding!!.ivFavoriteDish.setOnClickListener {
-            val randomDishDetails = FavDish(
-                recipe.image,
-                Constants.DISH_IMAGE_SOURCE_ONLINE,
-                recipe.title,
-                dishType,
-                "Other",
-                ingredients,
-                recipe.readyInMinutes.toString(),
-                recipe.instructions,
-                true
-            )
-            val mFavDishViewModel: FavDishViewModel by viewModels() {
-                FavDishViewModelFactory((requireActivity().application as FavDishApplication).repository)
-            }
-            mFavDishViewModel.insert(randomDishDetails)
-
-            binding!!.ivFavoriteDish.setImageDrawable(
-                resources.getDrawable(
-                    R.drawable.ic_favorite_selected,
-                    null
+            if (addedToFavorite) {
+                Toast.makeText(
+                    requireActivity(),
+                    resources.getString(R.string.msg_already_added_to_favorites),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                val randomDishDetails = FavDish(
+                    recipe.image,
+                    Constants.DISH_IMAGE_SOURCE_ONLINE,
+                    recipe.title,
+                    dishType,
+                    "Other",
+                    ingredients,
+                    recipe.readyInMinutes.toString(),
+                    recipe.instructions,
+                    true
                 )
-            )
-            Toast.makeText(
-                requireActivity(),
-                resources.getString(R.string.msg_added_to_favorites),
-                Toast.LENGTH_SHORT
-            ).show()
+                val mFavDishViewModel: FavDishViewModel by viewModels() {
+                    FavDishViewModelFactory((requireActivity().application as FavDishApplication).repository)
+                }
+                mFavDishViewModel.insert(randomDishDetails)
+
+                addedToFavorite = true
+
+
+                binding!!.ivFavoriteDish.setImageDrawable(
+                    resources.getDrawable(
+                        R.drawable.ic_favorite_selected,
+                        null
+                    )
+                )
+                Toast.makeText(
+                    requireActivity(),
+                    resources.getString(R.string.msg_added_to_favorites),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
         }
 
-
     }
+
 
     override fun onDestroy() {
         super.onDestroy()

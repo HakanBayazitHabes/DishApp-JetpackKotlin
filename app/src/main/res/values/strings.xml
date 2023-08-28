@@ -59,4 +59,6 @@
     <string name="action_filter_dishes">Filter Dishes</string>
     <string name="title_select_item_to_filter">Select item to filter</string>
 
+    <string name="msg_already_added_to_favorites">You have alredy added the dish to your favorites </string>
+
 </resources>
